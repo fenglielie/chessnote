@@ -1,2 +1,2 @@
-notebook>=7.0
-matplotlib>=3.7
+notebook==7.4.5
+matplotlib==3.10.5

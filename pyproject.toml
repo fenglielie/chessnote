@@ -9,3 +9,12 @@ authors = [{ name = "fenglielie", email = "fenglielie@qq.com" }]
 description = "Chinsees Chess Note Tool"
 requires-python = ">=3.11"
 readme = "README.md"
+dependencies = [
+    "notebook>=7.0",
+    "matplotlib>=3.7"
+]
+
+[project.optional-dependencies]
+dev = [
+    "coverage>=7.0",
+]
