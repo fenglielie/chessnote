@@ -63,6 +63,31 @@ graph TD
 对于一些少见的特殊情况：同一列存在四个或五个兵/卒，或者有两列，每一列都有至少两个兵/卒，目前无法采用合适的四字表示，需要直接指定移动棋子的起止点坐标对。
 
 
+## 下载使用
+
+要求 Python>=3.11
+
+```shell
+pip install git+https://github.com/fenglielie/chessnote.git
+```
+
+测试代码
+
+```python
+from chessnote import ChessRecorder
+
+r = ChessRecorder().exec(
+    """
+炮二平五，马8进7
+马二进三，车9平8
+车一平二，卒7进1
+车二进六，马2进3
+兵七进一，
+"""
+)
+r.draw()
+```
+
 ## 本地安装与开发
 
 Clone
@@ -70,10 +95,9 @@ Clone
 git clone https://github.com/fenglielie/chessnote.git
 ```
 
-create virtual environment
+create and activate virtual environment
 ```shell
 cd chessnote
-
 python -m venv .venv
 
 # bash
@@ -90,4 +114,9 @@ pip install -r requirements.txt
 install chessnote
 ```shell
 pip install -e .
+```
+
+test
+```shell
+python -m unittest discover -s tests
 ```
