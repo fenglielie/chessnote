@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chessnote"
+version = "0.0.1"
+authors = [{ name = "fenglielie", email = "fenglielie@qq.com" }]
+description = "Chinsees Chess Note Tool"
+requires-python = ">=3.11"
+readme = "README.md"
