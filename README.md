@@ -1,7 +1,47 @@
 # chessnote
 
 chessnote 是一个 Python 辅助库，用于在 **Jupyter Notebook** 中整理和分析中国象棋笔记。
-它不是一个象棋游戏，而是方便学习者快速记录、可视化棋局和分析走法。
+它不是一个象棋游戏，而是方便学习者快速地记录、可视化棋局和分析走法，使笔记摆脱任何的商业象棋软件。
+
+## 使用示例
+
+使用 Jupyter Notebook 的笔记效果如下图（也可以导出为 markdown 或 html）
+
+![](./images/example.png)
+
+单个棋局状态都可以生成图片，多个连续的棋局状态可以生成动画
+
+```python
+data = """
+1. 炮二平五 炮8平5
+2. 马二进三 马8进7
+3. 车一进一 车9平8
+4. 车一平六 车8进6
+5. 车六进七 马2进1
+6. 车九进一 炮2进7
+7. 炮八进五 马7退8
+8. 炮五进四 士6进5
+9. 车九平六 将5平6
+10. 前车进一 士5退4
+11. 车六平四 炮5平6
+12. 车四进六 将6平5
+13. 炮八平五
+"""  # 弃马十三招
+
+ChessRecorder().exec(data).draw(filename="demo.png")
+ChessRecorder().exec(data).animate(filename="demo.gif")
+```
+
+
+![](./images/demo.png)
+
+![](./images/demo.gif)
+
+更完整的示例：
+
+- [demo](./demo/demo.ipynb)
+- [象棋笔记——急进中兵](./demo/象棋笔记——急进中兵.ipynb)
+
 
 ## 主要数据类型
 
@@ -12,7 +52,7 @@ chessnote 是一个 Python 辅助库，用于在 **Jupyter Notebook** 中整理�
 - `ChessParser`：辅助的静态类，主要负责解析中文棋谱信息，但是不负责合法性检查
 - `ChessChecker`：辅助的静态类，负责检查指定状态下，棋子移动的（局部）合法性
 
-## 项目结构
+它们之前的关系如下
 
 ```mermaid
 graph TD
@@ -27,11 +67,6 @@ graph TD
     C --> R
     P --> R
 ```
-
-## 使用示例
-
-- [demo](./demo/demo.ipynb)
-- [象棋笔记——急进中兵](./demo/象棋笔记——急进中兵.ipynb)
 
 ## 内部实现
 
@@ -88,7 +123,7 @@ r = ChessRecorder().exec(
 r.draw()
 ```
 
-## 本地安装与开发
+## 安装与开发
 
 Clone
 ```shell
