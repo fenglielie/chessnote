@@ -5,11 +5,11 @@ chessnote 是一个 Python 辅助库，用于在 **Jupyter Notebook** 中整理�
 
 ## 使用示例
 
-使用 Jupyter Notebook 的笔记效果如下图（也可以导出为 markdown 或 html）
+使用 Jupyter Notebook 的笔记效果如下图（当然也可以导出为 markdown 或 html）
 
 ![](./images/example.png)
 
-单个棋局状态都可以生成图片，多个连续的棋局状态可以生成动画
+单个棋局状态可以生成图片，多个连续的棋局状态可以生成动画
 
 ```python
 data = """
@@ -52,7 +52,7 @@ ChessRecorder().exec(data).animate(filename="demo.gif")
 - `ChessParser`：辅助的静态类，主要负责解析中文棋谱信息，但是不负责合法性检查
 - `ChessChecker`：辅助的静态类，负责检查指定状态下，棋子移动的（局部）合法性
 
-它们之前的关系如下
+它们之间的关系如下
 
 ```mermaid
 graph TD
@@ -100,7 +100,7 @@ graph TD
 
 ## 下载使用
 
-要求 Python>=3.11
+要求 Python >= 3.11
 
 ```shell
 pip install git+https://github.com/fenglielie/chessnote.git
@@ -125,7 +125,7 @@ r.draw()
 
 ## 安装与开发
 
-Clone
+clone
 ```shell
 git clone https://github.com/fenglielie/chessnote.git
 ```
