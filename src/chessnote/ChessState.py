@@ -114,7 +114,7 @@ class ChessState(MutableMapping):
         """
         ASCII board display
         """
-        lines = []
+        lines: list[str] = []
         lines.append(" +-------------------+")
         for y in reversed(range(self._ROWS_NUM)):
             row_str = ""
@@ -166,14 +166,14 @@ class ChessStateIO:
     """
 
     @staticmethod
-    def save_to_dict(state: "ChessState") -> dict[str, str]:
+    def save_to_dict(state: ChessState) -> dict[str, str]:
         """
         Convert to dict, serialize position keys as '(x,y)'
         """
         return {str(pos): piece for pos, piece in state._pieces.items()}
 
     @staticmethod
-    def load_from_dict(data: dict[str, str]) -> "ChessState":
+    def load_from_dict(data: dict[str, str]) -> ChessState:
         """
         Load ChessState from dict
         """
@@ -184,7 +184,7 @@ class ChessStateIO:
         return state
 
     @staticmethod
-    def save_to_json_file(state: "ChessState", filepath: str) -> None:
+    def save_to_json_file(state: ChessState, filepath: str) -> None:
         """
         Save ChessState to JSON file
         """
@@ -192,7 +192,7 @@ class ChessStateIO:
             json.dump(ChessStateIO.save_to_dict(state), f, indent=2, ensure_ascii=False)
 
     @staticmethod
-    def load_from_json_file(filepath: str) -> "ChessState":
+    def load_from_json_file(filepath: str) -> ChessState:
         """
         Load ChessState from JSON file
         """

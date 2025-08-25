@@ -27,8 +27,8 @@ class ChessNode:
     def __repr__(self):
         trace_msg = f"{self.trace[0]} -> {self.trace[1]}" if self.trace else ""
         desc_msg = (
-            f"desc={self.extra_info.get('desc','')} "
-            f"color={self.extra_info.get('color','')}"
+            f"desc={self.extra_info.get('desc', '')} "
+            f"color={self.extra_info.get('color', '')}"
         )
 
         return f"{trace_msg} {desc_msg}\n{self.state}"
@@ -100,14 +100,16 @@ class ChessRecorder:
         self._rotate_flag = rotate_flag or get_rotate_flag()
         self._checkpoints: dict[str, int] = {}
 
-    def rotate(self):
+    def rotate(self) -> "ChessRecorder":
         """
         Toggle the rotation flag.
         """
         self._rotate_flag = not self._rotate_flag
         return self
 
-    def move(self, start: T.Pos, end: T.Pos, desc: str | None = None):
+    def move(
+        self, start: T.Pos, end: T.Pos, desc: str | None = None
+    ) -> "ChessRecorder":
         """
         Move a piece by start and end coordinates.
         """
@@ -148,7 +150,9 @@ class ChessRecorder:
         self._history.append(new_state, (start, end), extra_info=extra_info)
         return self
 
-    def exec(self, cmds: str | list[str] | tuple[str], strict_flag: bool = False):
+    def exec(
+        self, cmds: str | list[str] | tuple[str], strict_flag: bool = False
+    ) -> "ChessRecorder":
         """
         Update state using Chinese chess notation.
         """
@@ -178,11 +182,11 @@ class ChessRecorder:
             self.move(start, end, desc=cmd)
         return self
 
-    def set_checkpoint(self, name: str):
+    def set_checkpoint(self, name: str) -> None:
         """Save a checkpoint with a name."""
         self._checkpoints[name] = len(self._history)
 
-    def rollback_to_checkpoint(self, name: str):
+    def rollback_to_checkpoint(self, name: str) -> None:
         """Rollback history to a checkpoint."""
         if name not in self._checkpoints:
             raise KeyError(f"Checkpoint '{name}' not found")
@@ -190,7 +194,7 @@ class ChessRecorder:
         while len(self._history) > target_len:
             self._history.pop()
 
-    def rollback(self, steps: int):
+    def rollback(self, steps: int) -> None:
         """Rollback a given number of steps."""
         if steps < 0:
             raise ValueError(f"Steps must be non-negative, but got {steps}")
@@ -202,7 +206,7 @@ class ChessRecorder:
         renderer: ChessBoardRenderer | None = None,
         highlight_last_move: bool = True,
         **kwargs,
-    ):
+    ) -> None:
         """
         Render the current board state.
         """
@@ -225,7 +229,7 @@ class ChessRecorder:
         duration: int | None = None,
         highlight_moves: bool = True,
         **kwargs,
-    ):
+    ) -> None:
         """
         Animate the sequence of moves.
         """
@@ -289,7 +293,7 @@ class ChessRecorder:
         *,
         rotate_flag: bool | None = None,
         strict_flag: bool = False,
-    ):
+    ) -> None:
         arrows = []
         for cmd in cmds:
             arrows.append(

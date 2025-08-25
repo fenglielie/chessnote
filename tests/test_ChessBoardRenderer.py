@@ -10,14 +10,14 @@ class TestChessBoardRenderer(unittest.TestCase):
         self.renderer = ChessBoardRenderer()
 
     def test_draw_returns_fig_ax(self):
-        fig, ax = self.renderer.draw(self.state, return_fig=True)
+        fig, ax = self.renderer.draw_return_fig(self.state)
         self.assertIsNotNone(fig)
         self.assertIsNotNone(ax)
         fig.clf()
 
     def test_draw_returns_fig_ax_rotate(self):
         self.renderer.rotate()
-        fig, ax = self.renderer.draw(self.state, return_fig=True)
+        fig, ax = self.renderer.draw_return_fig(self.state)
         self.assertIsNotNone(fig)
         self.assertIsNotNone(ax)
         fig.clf()
@@ -33,15 +33,15 @@ class TestChessBoardRenderer(unittest.TestCase):
     def test_highlight_and_arrows(self):
         highlights = [(0, 0), (4, 0)]
         arrows = [((0, 0), (0, 1))]
-        fig, _ = self.renderer.draw(
-            self.state, highlight_pieces=highlights, arrows=arrows, return_fig=True
+        fig, _ = self.renderer.draw_return_fig(
+            self.state, highlight_pieces=highlights, arrows=arrows
         )
         self.assertIsNotNone(fig)
         fig.clf()
 
     def test_more_arrows(self):
         arrows = [((0, 0), (0, 1)), ((2, 0), (4, 1))]
-        fig, _ = self.renderer.draw(self.state, arrows=arrows, return_fig=True)
+        fig, _ = self.renderer.draw_return_fig(self.state, arrows=arrows)
         self.assertIsNotNone(fig)
         fig.clf()
 
@@ -66,7 +66,7 @@ class TestChessBoardRenderer(unittest.TestCase):
         style = {"board": {"grid_color": "blue"}, "unknonwn": None}
         piece_config = {"K": "King"}
         renderer = ChessBoardRenderer(style=style, piece_config=piece_config)
-        fig, _ = renderer.draw(self.state, return_fig=True)
+        fig, _ = renderer.draw_return_fig(self.state)
         self.assertEqual(renderer._style["board"]["grid_color"], "blue")
         self.assertEqual(renderer._piece_config["K"], "King")
         fig.clf()

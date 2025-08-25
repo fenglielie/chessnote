@@ -1,6 +1,8 @@
 from io import BytesIO
 from PIL import Image
 from IPython.display import display, Image as IPImage
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, FancyArrowPatch, Rectangle
 from matplotlib.lines import Line2D
@@ -75,14 +77,13 @@ class ChessBoardRenderer:
         self._rotate_flag = not self._rotate_flag
         return self
 
-    def draw(
+    def draw_return_fig(
         self,
         state: ChessState,
         highlight_pieces: T.SeqPos | None = None,
         arrows: T.SeqArrow | None = None,
         filename: str | None = None,
-        return_fig: bool = False,
-    ):
+    ) -> tuple[Figure, Axes]:
         """
         Draw a static chessboard with pieces, highlights, and arrows
         """
@@ -94,6 +95,7 @@ class ChessBoardRenderer:
         ax.axis("off")
 
         self._draw_grid(ax)
+        self._draw_cannon_pawn_marks(ax)
         self._draw_labels(ax)
         self._draw_pieces(ax, state)
 
@@ -107,7 +109,21 @@ class ChessBoardRenderer:
             fig.savefig(filename)
             logger.info(f"Saved to {filename}")
 
-        return (fig, ax) if return_fig else None
+        return fig, ax
+
+    def draw(
+        self,
+        state: ChessState,
+        highlight_pieces: T.SeqPos | None = None,
+        arrows: T.SeqArrow | None = None,
+        filename: str | None = None,
+    ) -> None:
+        self.draw_return_fig(
+            state,
+            highlight_pieces=highlight_pieces,
+            arrows=arrows,
+            filename=filename,
+        )
 
     def animate(
         self,
@@ -117,7 +133,7 @@ class ChessBoardRenderer:
         highlight_pieces_seq: T.SeqSeqPos | None = None,
         arrows_seq: T.SeqSeqArrow | None = None,
         filename: str | None = None,
-    ):
+    ) -> None:
         """
         Animate a sequence of chessboard states
         """
@@ -128,8 +144,8 @@ class ChessBoardRenderer:
             highlight_pieces = highlight_pieces_seq[i] if highlight_pieces_seq else None
             arrows = arrows_seq[i] if arrows_seq else None
 
-            fig, _ = self.draw(
-                state, highlight_pieces=highlight_pieces, arrows=arrows, return_fig=True
+            fig, _ = self.draw_return_fig(
+                state, highlight_pieces=highlight_pieces, arrows=arrows
             )
             buf = BytesIO()
             fig.savefig(buf, format="png", bbox_inches="tight", pad_inches=0.2)
@@ -163,7 +179,7 @@ class ChessBoardRenderer:
         gif_buf.seek(0)
         display(IPImage(data=gif_buf.getvalue()))
 
-    def _draw_grid(self, ax):
+    def _draw_grid(self, ax: Axes) -> None:
         grid_style = {
             "color": self._style["board"]["grid_color"],
             "lw": self._style["board"]["grid_lw"],
@@ -199,7 +215,7 @@ class ChessBoardRenderer:
         for (x0, y0), (x1, y1) in palace_coords:
             ax.plot([x0, x1], [y0, y1], **grid_style)
 
-    def _draw_pieces(self, ax, state):
+    def _draw_pieces(self, ax: Axes, state: ChessState) -> None:
         circle_style = {
             "facecolor": self._style["piece"]["facecolor"],
             "edgecolor": "black",
@@ -223,7 +239,7 @@ class ChessBoardRenderer:
             color = "red" if piece.isupper() else "black"
             ax.text(x, y, name, color=color, **text_style)
 
-    def _draw_labels(self, ax):
+    def _draw_labels(self, ax: Axes) -> None:
         style = {"fontsize": self._style["piece"]["font_size"], "ha": "center"}
 
         if not self._rotate_flag:
@@ -243,7 +259,7 @@ class ChessBoardRenderer:
         ax.text(2, 4.5, mid_labels[0], va="center", **style)
         ax.text(6, 4.5, mid_labels[1], va="center", **style)
 
-    def _draw_highlight(self, ax, highlight_pieces):
+    def _draw_highlight(self, ax: Axes, highlight_pieces: T.SeqPos) -> None:
         r = 1.2 * self._style["piece"]["radius"]
         width = r * 0.3
 
@@ -259,17 +275,51 @@ class ChessBoardRenderer:
             # left down
             ax.add_line(Line2D([left, left + width], [down, down], **hl_style))
             ax.add_line(Line2D([left, left], [down, down + width], **hl_style))
-            # right down
-            ax.add_line(Line2D([right - width, right], [down, down], **hl_style))
-            ax.add_line(Line2D([right, right], [down, down + width], **hl_style))
             # left up
             ax.add_line(Line2D([left, left + width], [top, top], **hl_style))
             ax.add_line(Line2D([left, left], [top - width, top], **hl_style))
+            # right down
+            ax.add_line(Line2D([right - width, right], [down, down], **hl_style))
+            ax.add_line(Line2D([right, right], [down, down + width], **hl_style))
             # right up
             ax.add_line(Line2D([right - width, right], [top, top], **hl_style))
             ax.add_line(Line2D([right, right], [top - width, top], **hl_style))
 
-    def _draw_arrows(self, ax, arrows):
+    def _draw_cannon_pawn_marks(self, ax: Axes) -> None:
+        pawn_cols = [0, 2, 4, 6, 8]
+        for x in pawn_cols:
+            for y in [3, 6]:
+                self._draw_corner_marks(ax, x, y, r=0.1, w=0.1)
+
+        cannon_positions = [(1, 2), (7, 2), (1, 7), (7, 7)]
+        for x, y in cannon_positions:
+            self._draw_corner_marks(ax, x, y, r=0.1, w=0.1)
+
+    def _draw_corner_marks(
+        self, ax: Axes, x: int, y: int, *, r: float, w: float
+    ) -> None:
+        style = {
+            "color": self._style["board"]["grid_color"],
+            "lw": self._style["board"]["grid_lw"],
+            "zorder": 1,
+        }
+        if x - r - w >= 0:
+            # left down
+            ax.add_line(Line2D([x - r - w, x - r], [y - r, y - r], **style))
+            ax.add_line(Line2D([x - r, x - r], [y - r - w, y - r], **style))
+            # left up
+            ax.add_line(Line2D([x - r - w, x - r], [y + r, y + r], **style))
+            ax.add_line(Line2D([x - r, x - r], [y + r, y + r + w], **style))
+
+        if x + r + w <= 8:
+            # right down
+            ax.add_line(Line2D([x + r, x + r + w], [y - r, y - r], **style))
+            ax.add_line(Line2D([x + r, x + r], [y - r - w, y - r], **style))
+            # right up
+            ax.add_line(Line2D([x + r, x + r + w], [y + r, y + r], **style))
+            ax.add_line(Line2D([x + r, x + r], [y + r, y + r + w], **style))
+
+    def _draw_arrows(self, ax: Axes, arrows: T.SeqArrow) -> None:
         arrows_style = {
             "arrowstyle": "->",
             "color": self._style["arrow"]["color"],

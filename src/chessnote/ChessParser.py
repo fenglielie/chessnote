@@ -192,26 +192,16 @@ class ChessParser:
         for (i, j), v in state.items():
             state_map.setdefault(v, []).append((i, j))
 
-        # Extract tokens
-        if cmd[0] in HARD_MODE_KEYWORDS:
-            piece_ch, op_type, op_arg_ch = cmd[1], cmd[2], cmd[3]
-        else:
-            piece_ch, col_ch, op_type, op_arg_ch = (
-                cmd[0],
-                cmd[1],
-                cmd[2],
-                cmd[3],
-            )
-
         color = ChessParser.detect_color(cmd)
         side = ChessParser.detect_side(color, rotate_flag=rotate_flag)
 
-        piece = ChessParser.parse_piece_char(
-            piece_ch, color=color, strict_flag=strict_flag
-        )
-
         # Determine starting position
         if cmd[0] not in HARD_MODE_KEYWORDS:
+            piece_ch, col_ch, op_ch, op_arg_ch = cmd[0], cmd[1], cmd[2], cmd[3]
+            piece = ChessParser.parse_piece_char(
+                piece_ch, color=color, strict_flag=strict_flag
+            )
+
             if piece not in state_map:
                 raise ValueError(f"Source piece not found: {piece}")
 
@@ -221,6 +211,12 @@ class ChessParser:
             if start is None:
                 raise ValueError(f"Source piece not found: {piece} at {col_ch}")
         else:
+            sort_ch, piece_ch, op_ch, op_arg_ch = cmd[0], cmd[1], cmd[2], cmd[3]
+
+            piece = ChessParser.parse_piece_char(
+                piece_ch, color=color, strict_flag=strict_flag
+            )
+
             positions = list(state_map[piece])
             cols = {i for i, j in positions}
             if len(cols) > 1:
@@ -231,34 +227,34 @@ class ChessParser:
             else:
                 positions.sort(key=lambda x: x[1])
 
-            if cmd[0] == "前":
+            if sort_ch == "前":
                 if len(positions) < 2:
                     raise ValueError(f"'前' requires >=2 pieces ({cmd=})")
                 start = positions[0]
-            elif cmd[0] == "后":
+            elif sort_ch == "后":
                 if len(positions) < 2:
                     raise ValueError(f"'后' requires >=2 pieces ({cmd=})")
                 start = positions[-1]
-            else:  # cmd[0] == "中"
+            else:  # sort_ch == "中"
                 if len(positions) < 3:
                     raise ValueError(f"'中' requires >=3 pieces ({cmd=})")
                 start = positions[1]
 
         # Determine ending position
         if piece.lower() in ("k", "r", "c", "p"):
-            if op_type == "平":
+            if op_ch == "平":
                 end = (
                     ChessParser.parse_col_idx(op_arg_ch, color=color, side=side),
                     start[1],
                 )
-            elif op_type == "进":
+            elif op_ch == "进":
                 end_row = start[1] + ChessParser.parse_row_delta(
                     op_arg_ch, color=color, side=side
                 )
                 if not (0 <= end_row <= 9):
                     raise ValueError(f"Row out of range: {end_row=}")
                 end = (start[0], end_row)
-            elif op_type == "退":
+            elif op_ch == "退":
                 end_row = start[1] - ChessParser.parse_row_delta(
                     op_arg_ch, color=color, side=side
                 )
@@ -266,7 +262,7 @@ class ChessParser:
                     raise ValueError(f"Row out of range: {end_row=}")
                 end = (start[0], end_row)
             else:
-                raise ValueError(f"Invalid operator {op_type} for {piece}")
+                raise ValueError(f"Invalid operator {op_ch} for {piece}")
 
         elif piece.lower() in ("a", "e"):  # Advisor / Elephant
             end_col = ChessParser.parse_col_idx(op_arg_ch, color=color, side=side)
@@ -274,16 +270,16 @@ class ChessParser:
                 delta_unit = "一" if color == "red" else "1"
             else:  # e
                 delta_unit = "二" if color == "red" else "2"
-            if op_type == "进":
+            if op_ch == "进":
                 end_row = start[1] + ChessParser.parse_row_delta(
                     delta_unit, color=color, side=side
                 )
-            elif op_type == "退":
+            elif op_ch == "退":
                 end_row = start[1] - ChessParser.parse_row_delta(
                     delta_unit, color=color, side=side
                 )
             else:
-                raise ValueError(f"Invalid operator {op_type} for {piece}")
+                raise ValueError(f"Invalid operator {op_ch} for {piece}")
             end = (end_col, end_row)
 
         else:  # piece.lower() == "h"  # Horse
@@ -295,16 +291,16 @@ class ChessParser:
             else:
                 raise ValueError(f"Invalid horse move: {cmd} ({piece=})")
 
-            if op_type == "进":
+            if op_ch == "进":
                 end_row = start[1] + ChessParser.parse_row_delta(
                     delta_unit, color=color, side=side
                 )
-            elif op_type == "退":
+            elif op_ch == "退":
                 end_row = start[1] - ChessParser.parse_row_delta(
                     delta_unit, color=color, side=side
                 )
             else:
-                raise ValueError(f"Invalid operator {op_type} for {piece}")
+                raise ValueError(f"Invalid operator {op_ch} for {piece}")
             end = (end_col, end_row)
 
         return start, end
