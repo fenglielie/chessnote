@@ -330,7 +330,7 @@ class ChessBoardRenderer:
 
         arrows_text_style = {
             "color": "white",
-            "fontsize": 8,
+            "fontsize": 10,
             "ha": "center",
             "va": "center",
             "zorder": 6,
@@ -348,6 +348,6 @@ class ChessBoardRenderer:
             if n == 1:
                 continue
 
-            text_x = x1 + 0.5 * (x2 - x1)
-            text_y = y1 + 0.5 * (y2 - y1)
+            text_x = x2
+            text_y = y2
             ax.text(text_x, text_y, str(idx), **arrows_text_style)
