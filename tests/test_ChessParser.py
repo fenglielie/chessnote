@@ -199,6 +199,12 @@ class TestChessParser(unittest.TestCase):
         with self.assertRaises(ValueError):
             ChessParser.parse_cmd(self.state, "车二进七")
 
+        with self.assertRaises(ValueError):
+            ChessParser.parse_cmd(self.state, "炮二平")
+
+        with self.assertRaises(ValueError):
+            ChessParser.parse_cmd(self.state, "前车进一")
+
     def test_parse_cmd_explicit_rotate_flag_overrides_default(self):
         set_rotate_flag(True)
         try:

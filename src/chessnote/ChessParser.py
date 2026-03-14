@@ -184,6 +184,8 @@ class ChessParser:
             (from_pos, to_pos): both as (col, row).
         """
         HARD_MODE_KEYWORDS = ["前", "中", "后"]
+        if len(cmd) != 4:
+            raise ValueError(f"Invalid cmd length: {cmd!r}")
 
         rotate_flag = get_rotate_flag() if rotate_flag is None else rotate_flag
 
@@ -217,7 +219,10 @@ class ChessParser:
                 piece_ch, color=color, strict_flag=strict_flag
             )
 
-            positions = list(state_map[piece])
+            positions = state_map.get(piece)
+            if not positions:
+                raise ValueError(f"Source piece not found: {piece}")
+            positions = list(positions)
             cols = {i for i, j in positions}
             if len(cols) > 1:
                 raise ValueError(f"{piece} not in same column ({positions=})")

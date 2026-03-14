@@ -1,6 +1,6 @@
 import os
 import unittest
-import tempfile
+from unittest.mock import patch
 from chessnote import ChessState, ChessBoardRenderer, set_rotate_flag
 
 
@@ -24,11 +24,17 @@ class TestChessBoardRenderer(unittest.TestCase):
         self.renderer.rotate()
 
     def test_draw_saves_file(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            filepath = os.path.join(tmpdir, "chess.png")
+        filepath = os.path.join(os.getcwd(), "_test_chess.png")
+        try:
             self.renderer.draw(self.state, filename=filepath)
             self.assertTrue(os.path.exists(filepath))
             self.assertGreater(os.path.getsize(filepath), 0)
+        finally:
+            if os.path.exists(filepath):
+                try:
+                    os.remove(filepath)
+                except PermissionError:
+                    pass
 
     def test_highlight_and_arrows(self):
         highlights = [(0, 0), (4, 0)]
@@ -56,11 +62,19 @@ class TestChessBoardRenderer(unittest.TestCase):
         states = [self.state.deepcopy(), self.state.deepcopy()]
         states[1].move((0, 0), (0, 1))
         self.renderer.animate(states, duration=100)
-        with tempfile.TemporaryDirectory() as tmpdir:
-            filepath = os.path.join(tmpdir, "chess.gif")
-            self.renderer.animate(states, duration=100, filename=filepath)
+        filepath = os.path.join(os.getcwd(), "_test_chess.gif")
+        try:
+            with patch("chessnote.ChessBoardRenderer.display") as mock_display:
+                self.renderer.animate(states, duration=100, filename=filepath)
+            mock_display.assert_not_called()
             self.assertTrue(os.path.exists(filepath))
             self.assertGreater(os.path.getsize(filepath), 0)
+        finally:
+            if os.path.exists(filepath):
+                try:
+                    os.remove(filepath)
+                except PermissionError:
+                    pass
 
     def test_custom_style_and_piece_config(self):
         style = {"board": {"grid_color": "blue"}, "unknonwn": None}

@@ -173,7 +173,7 @@ class ChessRecorder:
                     rotate_flag=self._rotate_flag,
                     strict_flag=strict_flag,
                 )
-            except ValueError as e:
+            except Exception as e:
                 state_snapshot = self._history._queue[-1].state
                 extra_msg = (
                     f"Invalid cmd detected: {cmd=} ({strict_flag=})\n"

@@ -1,5 +1,4 @@
 import unittest
-import tempfile
 import os
 from chessnote import ChessState, ChessStateIO, set_rotate_flag
 
@@ -99,11 +98,17 @@ class TestChessState(unittest.TestCase):
         loaded_state = ChessStateIO.load_from_dict(d)
         self.assertEqual(self.state._pieces, loaded_state._pieces)
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            filepath = os.path.join(tmpdir, "state.json")
+        filepath = os.path.join(os.getcwd(), "_test_state.json")
+        try:
             ChessStateIO.save_to_json_file(self.state, filepath)
             loaded_json_state = ChessStateIO.load_from_json_file(filepath)
             self.assertEqual(self.state._pieces, loaded_json_state._pieces)
+        finally:
+            if os.path.exists(filepath):
+                try:
+                    os.remove(filepath)
+                except PermissionError:
+                    pass
 
 
 if __name__ == "__main__":

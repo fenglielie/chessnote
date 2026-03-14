@@ -8,7 +8,7 @@ from matplotlib.patches import Circle, FancyArrowPatch, Rectangle
 from matplotlib.lines import Line2D
 import copy
 
-from .utils import get_rotate_flag, logger
+from .utils import _get_kaiti_font, get_rotate_flag, logger
 from .utils import Types as T
 from .ChessState import ChessState
 
@@ -63,6 +63,7 @@ class ChessBoardRenderer:
                     self._style[layer].update(opts)
 
         self._piece_config = copy.deepcopy(self._DEFAULT_PIECE_CHINESE)
+        self._font = _get_kaiti_font()
 
         # update piece_config
         if piece_config is not None:
@@ -168,6 +169,7 @@ class ChessBoardRenderer:
                 loop=0,
             )
             logger.info(f"Saved to {filename}")
+            return
 
         gif_buf = BytesIO()
         frames[0].save(
@@ -231,6 +233,7 @@ class ChessBoardRenderer:
             "va": "center",
             "weight": "bold",
             "zorder": 3,
+            "fontproperties": self._font,
         }
 
         for (x, y), piece in state.items():
@@ -242,7 +245,11 @@ class ChessBoardRenderer:
             ax.text(x, y, name, color=color, **text_style)
 
     def _draw_labels(self, ax: Axes) -> None:
-        style = {"fontsize": self._style["piece"]["font_size"], "ha": "center"}
+        style = {
+            "fontsize": self._style["piece"]["font_size"],
+            "ha": "center",
+            "fontproperties": self._font,
+        }
 
         if not self._rotate_flag:
             down_labels = ChessBoardRenderer._RED_LABELS[::-1]

@@ -2,7 +2,6 @@ import logging
 from collections.abc import Sequence
 
 import matplotlib
-from matplotlib import pyplot as plt
 import matplotlib.font_manager
 from matplotlib_inline import backend_inline
 from IPython.core.getipython import get_ipython
@@ -71,8 +70,6 @@ def _get_kaiti_font():
     _cached_font = matplotlib.font_manager.FontProperties(family="sans-serif")
     return _cached_font
 
-
-plt.rcParams["font.sans-serif"] = [_get_kaiti_font().get_name()]
 
 try:
     shell = get_ipython()
