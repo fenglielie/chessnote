@@ -98,12 +98,15 @@ graph TD
 对于一些少见的特殊情况：同一列存在四个或五个兵/卒，或者有两列，每一列都有至少两个兵/卒，目前无法采用合适的四字表示，需要直接指定移动棋子的起止点坐标对。
 
 
-## 下载使用
+## 安装使用
 
-要求 Python >= 3.11
+要求 Python >= 3.11。
+
+在本地快速试用：
 
 ```shell
-pip install git+https://github.com/fenglielie/chessnote.git
+uv venv --python 3.11
+uv pip install git+https://github.com/fenglielie/chessnote.git
 ```
 
 测试代码
@@ -123,35 +126,31 @@ r = ChessRecorder().exec(
 r.draw()
 ```
 
-## 安装与开发
+## 开发
 
-clone
+clone 仓库并进入目录：
+
 ```shell
 git clone https://github.com/fenglielie/chessnote.git
-```
-
-create and activate virtual environment
-```shell
 cd chessnote
-python -m venv .venv
-
-# bash
-source .venv/bin/activate
-# or Pwsh
-.\.venv\Scripts\Activate.ps1
 ```
 
-install dependencies
+创建并同步开发环境：
+
 ```shell
-pip install -r requirements.txt
+uv venv --python 3.11
+uv sync --extra dev
 ```
 
-install chessnote
+
+启动 Jupyter Notebook：
+
 ```shell
-pip install -e .
+uv run jupyter notebook
 ```
 
-test
+运行测试：
+
 ```shell
-python -m unittest discover -s tests
+uv run python -m unittest discover -s tests
 ```
