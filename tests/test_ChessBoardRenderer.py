@@ -1,7 +1,7 @@
 import os
 import unittest
 import tempfile
-from chessnote import ChessState, ChessBoardRenderer
+from chessnote import ChessState, ChessBoardRenderer, set_rotate_flag
 
 
 class TestChessBoardRenderer(unittest.TestCase):
@@ -70,6 +70,14 @@ class TestChessBoardRenderer(unittest.TestCase):
         self.assertEqual(renderer._style["board"]["grid_color"], "blue")
         self.assertEqual(renderer._piece_config["K"], "King")
         fig.clf()
+
+    def test_explicit_rotate_flag_overrides_default(self):
+        set_rotate_flag(True)
+        try:
+            renderer = ChessBoardRenderer(rotate_flag=False)
+            self.assertFalse(renderer._rotate_flag)
+        finally:
+            set_rotate_flag(False)
 
 
 if __name__ == "__main__":

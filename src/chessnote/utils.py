@@ -5,6 +5,7 @@ import matplotlib
 from matplotlib import pyplot as plt
 import matplotlib.font_manager
 from matplotlib_inline import backend_inline
+from IPython.core.getipython import get_ipython
 
 # types
 
@@ -73,4 +74,9 @@ def _get_kaiti_font():
 
 plt.rcParams["font.sans-serif"] = [_get_kaiti_font().get_name()]
 
-backend_inline.set_matplotlib_formats("svg")
+try:
+    shell = get_ipython()
+    if shell is not None:
+        backend_inline.set_matplotlib_formats("svg")
+except Exception:
+    pass

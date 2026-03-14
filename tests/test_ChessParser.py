@@ -1,5 +1,5 @@
 import unittest
-from chessnote import ChessState, ChessParser
+from chessnote import ChessState, ChessParser, set_rotate_flag
 
 
 class TestChessParser(unittest.TestCase):
@@ -198,6 +198,16 @@ class TestChessParser(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             ChessParser.parse_cmd(self.state, "车二进七")
+
+    def test_parse_cmd_explicit_rotate_flag_overrides_default(self):
+        set_rotate_flag(True)
+        try:
+            state = ChessState(empty=True)
+            state[(0, 0)] = "R"
+            start, end = ChessParser.parse_cmd(state, "车九进一", rotate_flag=False)
+            self.assertEqual((start, end), ((0, 0), (0, 1)))
+        finally:
+            set_rotate_flag(False)
 
 
 if __name__ == "__main__":

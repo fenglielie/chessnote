@@ -185,7 +185,7 @@ class ChessParser:
         """
         HARD_MODE_KEYWORDS = ["前", "中", "后"]
 
-        rotate_flag = rotate_flag or get_rotate_flag()
+        rotate_flag = get_rotate_flag() if rotate_flag is None else rotate_flag
 
         # Build reverse map from state
         state_map: dict[str, list[tuple[int, int]]] = {}

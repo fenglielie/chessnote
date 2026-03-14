@@ -97,7 +97,9 @@ class ChessRecorder:
             state = ChessState(rotate=rotate_flag)
 
         self._history = ChessNodeDeque(state, None, None)
-        self._rotate_flag = rotate_flag or get_rotate_flag()
+        self._rotate_flag = (
+            get_rotate_flag() if rotate_flag is None else rotate_flag
+        )
         self._checkpoints: dict[str, int] = {}
 
     def rotate(self) -> "ChessRecorder":

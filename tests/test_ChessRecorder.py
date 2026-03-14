@@ -1,5 +1,5 @@
 import unittest
-from chessnote import ChessState, ChessRecorder, ChessBoardRenderer
+from chessnote import ChessState, ChessRecorder, ChessBoardRenderer, set_rotate_flag
 
 
 class TestChessRecorder(unittest.TestCase):
@@ -116,6 +116,20 @@ class TestChessRecorder(unittest.TestCase):
     def test_dryrun(self):
         self.rec = ChessRecorder()
         self.rec.dryrun(["炮二平五", "马八进七"])
+
+    def test_dryrun_does_not_mutate_history(self):
+        self.rec = ChessRecorder()
+        before = self.rec.last()
+        self.rec.dryrun(["炮二平五", "马八进七"])
+        self.assertEqual(before, self.rec.last())
+
+    def test_explicit_rotate_flag_overrides_default(self):
+        set_rotate_flag(True)
+        try:
+            rec = ChessRecorder(state=ChessState(empty=True), rotate_flag=False)
+            self.assertFalse(rec._rotate_flag)
+        finally:
+            set_rotate_flag(False)
 
     # ----------------- repr -----------------
     def test_repr(self):

@@ -68,7 +68,9 @@ class ChessBoardRenderer:
         if piece_config is not None:
             self._piece_config.update(piece_config)
 
-        self._rotate_flag = rotate_flag or get_rotate_flag()
+        self._rotate_flag = (
+            get_rotate_flag() if rotate_flag is None else rotate_flag
+        )
 
     def rotate(self) -> "ChessBoardRenderer":
         """
